@@ -130,11 +130,11 @@ client.on("interactionCreate", async (interaction) => {
 
         if (utilisateur) {
             await interaction.reply(
-                `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
+                ` **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
             );
         } else {
             await interaction.reply(
-                `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
+                ` **never gonna give you up**\n\n${RICK_ROLL_GIF}`
             );
         }
     }
