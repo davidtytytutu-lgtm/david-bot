@@ -12,12 +12,20 @@ const http = require("http");
 
 const GUILD_ID = "1550531386295718060";
 
-const GITHUB_REPO =
+const GITHUB_MEME_REPO =
     "https://api.github.com/repos/davidtytytutu-lgtm/david-bot/contents/meme";
 
-const RICK_ROLL_V1 =
+const RICK_ROLL_GIF =
     "https://c.tenor.com/x8v1oNUOmg4AAAAd/tenor.gif";
 
+const WEBSITE =
+    "https://david-officiel.neocities.org/";
+
+const TIKTOK =
+    "https://www.tiktok.com/@0cherif_cat0";
+
+const NEOCITIES =
+    "https://neocities.org/site/david-officiel";
 
 // ==================================================
 // CLIENT DISCORD
@@ -38,15 +46,21 @@ const client = new Client({
 const PORT = process.env.PORT || 10000;
 
 const server = http.createServer((req, res) => {
+
     res.writeHead(200, {
         "Content-Type": "text/plain; charset=utf-8"
     });
 
     res.end("🤖 DAVID BOT est en ligne !");
+
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-    console.log(`🌐 Serveur HTTP démarré sur le port ${PORT}`);
+
+    console.log(
+        `🌐 Serveur HTTP démarré sur le port ${PORT}`
+    );
+
 });
 
 // ==================================================
@@ -55,17 +69,29 @@ server.listen(PORT, "0.0.0.0", () => {
 
 const commands = [
 
+    // ----------------------------------------------
+    // PING
+    // ----------------------------------------------
+
     new SlashCommandBuilder()
         .setName("ping")
         .setDescription("Vérifie si DAVID BOT répond."),
+
+    // ----------------------------------------------
+    // HELP
+    // ----------------------------------------------
 
     new SlashCommandBuilder()
         .setName("help")
         .setDescription("Affiche les commandes disponibles."),
 
+    // ----------------------------------------------
+    // RICK ROLL
+    // ----------------------------------------------
+
     new SlashCommandBuilder()
         .setName("rick-roll")
-        .setDescription("Rick Roll quelqu'un ")
+        .setDescription("Rick Roll quelqu'un 😈")
         .addUserOption(option =>
             option
                 .setName("utilisateur")
@@ -73,9 +99,38 @@ const commands = [
                 .setRequired(false)
         ),
 
+    // ----------------------------------------------
+    // MEME
+    // ----------------------------------------------
+
     new SlashCommandBuilder()
         .setName("meme")
-        .setDescription("Envoie un meme aléatoire ")
+        .setDescription("Envoie un meme aléatoire 😂"),
+
+    // ----------------------------------------------
+    // WEB
+    // ----------------------------------------------
+
+    new SlashCommandBuilder()
+        .setName("web")
+        .setDescription("Envoie le site officiel de DAVID."),
+
+    // ----------------------------------------------
+    // TIKTOK
+    // ----------------------------------------------
+
+    new SlashCommandBuilder()
+        .setName("tiktok")
+        .setDescription("Envoie le TikTok de DAVID."),
+
+    // ----------------------------------------------
+    // NEOCITIES
+    // ----------------------------------------------
+
+    new SlashCommandBuilder()
+        .setName("neocities")
+        .setDescription("Envoie le profil Neocities de DAVID.")
+
 ];
 
 // ==================================================
@@ -94,7 +149,9 @@ client.once("ready", async () => {
 
         await guild.commands.set(commands);
 
-        console.log("✅ Commandes slash enregistrées !");
+        console.log(
+            "✅ Commandes slash enregistrées !"
+        );
 
     } catch (error) {
 
@@ -104,10 +161,11 @@ client.once("ready", async () => {
         );
 
     }
+
 });
 
 // ==================================================
-// COMMANDES
+// COMMANDES SLASH
 // ==================================================
 
 client.on("interactionCreate", async (interaction) => {
@@ -121,7 +179,9 @@ client.on("interactionCreate", async (interaction) => {
 
     if (interaction.commandName === "ping") {
 
-        await interaction.reply("🏓 Pong !");
+        await interaction.reply(
+            "🏓 Pong !"
+        );
 
         return;
     }
@@ -142,7 +202,7 @@ client.on("interactionCreate", async (interaction) => {
                 "→ Vérifie si DAVID BOT répond.\n\n" +
 
                 "📖 `/help`\n" +
-                "→ Affiche cette liste.\n\n" +
+                "→ Affiche cette aide.\n\n" +
 
                 "😈 `/rick-roll`\n" +
                 "→ Rick Roll quelqu'un.\n\n" +
@@ -151,9 +211,19 @@ client.on("interactionCreate", async (interaction) => {
                 "→ Rick Roll une personne précise.\n\n" +
 
                 "😂 `/meme`\n" +
-                "→ Envoie un meme aléatoire depuis le dossier GitHub `meme/`.",
+                "→ Envoie un meme aléatoire depuis GitHub.\n\n" +
+
+                "🌐 `/web`\n" +
+                "→ Envoie le site officiel de DAVID.\n\n" +
+
+                "🎵 `/tiktok`\n" +
+                "→ Envoie le TikTok de DAVID.\n\n" +
+
+                "🌐 `/neocities`\n" +
+                "→ Envoie le profil Neocities de DAVID.",
 
             ephemeral: false
+
         });
 
         return;
@@ -173,30 +243,16 @@ client.on("interactionCreate", async (interaction) => {
         if (utilisateur) {
 
             await interaction.reply(
-                ` **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_V1}`
+                `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
             );
 
         } else {
 
             await interaction.reply(
-                ` **Tu viens de te faire Rick Roll lol**\n\n${RICK_ROLL_V1}`
+                `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
             );
 
         }
-
-        return;
-    }
-
-
-    // ==================================================
-    // /RICK-ROLL-V2
-    // ==================================================
-
-    if (interaction.commandName === "rick-roll-v2") {
-
-        await interaction.reply(
-            `🎵 **NEVER GONNA GIVE YOU UP!**\n\n${RICK_ROLL_V2}`
-        );
 
         return;
     }
@@ -210,17 +266,17 @@ client.on("interactionCreate", async (interaction) => {
 
         await interaction.deferReply();
 
-
         try {
 
             // Récupération du contenu du dossier meme/
-            const response = await fetch(GITHUB_REPO, {
-
-                headers: {
-                    "User-Agent": "DAVID-BOT"
+            const response = await fetch(
+                GITHUB_MEME_REPO,
+                {
+                    headers: {
+                        "User-Agent": "DAVID-BOT"
+                    }
                 }
-
-            });
+            );
 
 
             if (!response.ok) {
@@ -235,12 +291,15 @@ client.on("interactionCreate", async (interaction) => {
             const files = await response.json();
 
 
-            // On garde uniquement les fichiers
+            // Garder uniquement les fichiers compatibles
             const memes = files.filter(file => {
 
-                if (file.type !== "file") return false;
+                if (file.type !== "file") {
+                    return false;
+                }
 
-                const name = file.name.toLowerCase();
+                const name =
+                    file.name.toLowerCase();
 
                 return (
                     name.endsWith(".jpg") ||
@@ -255,7 +314,7 @@ client.on("interactionCreate", async (interaction) => {
             });
 
 
-            // Aucun meme trouvé
+            // Aucun meme
             if (memes.length === 0) {
 
                 await interaction.editReply(
@@ -268,21 +327,25 @@ client.on("interactionCreate", async (interaction) => {
 
             // Choix aléatoire
             const meme =
-                memes[Math.floor(Math.random() * memes.length)];
+                memes[
+                    Math.floor(
+                        Math.random() * memes.length
+                    )
+                ];
 
 
-            // URL brute GitHub
+            // URL RAW GitHub
             const memeURL =
                 `https://raw.githubusercontent.com/davidtytytutu-lgtm/david-bot/refs/heads/main/meme/${encodeURIComponent(meme.name)}`;
 
 
             console.log(
-                ` Meme choisi : ${meme.name}`
+                `😂 Meme choisi : ${meme.name}`
             );
 
 
             await interaction.editReply(
-                ` **Meme aléatoire : ${meme.name}**\n\n${memeURL}`
+                `😂 **Meme aléatoire : ${meme.name}**\n\n${memeURL}`
             );
 
 
@@ -303,6 +366,48 @@ client.on("interactionCreate", async (interaction) => {
         return;
     }
 
+
+    // ==================================================
+    // /WEB
+    // ==================================================
+
+    if (interaction.commandName === "web") {
+
+        await interaction.reply(
+            `🌐 **DAVID OFFICIEL**\n${WEBSITE}`
+        );
+
+        return;
+    }
+
+
+    // ==================================================
+    // /TIKTOK
+    // ==================================================
+
+    if (interaction.commandName === "tiktok") {
+
+        await interaction.reply(
+            `🎵 **TikTok de DAVID**\n${TIKTOK}`
+        );
+
+        return;
+    }
+
+
+    // ==================================================
+    // /NEOCITIES
+    // ==================================================
+
+    if (interaction.commandName === "neocities") {
+
+        await interaction.reply(
+            `🌐 **Profil Neocities de DAVID**\n${NEOCITIES}`
+        );
+
+        return;
+    }
+
 });
 
 // ==================================================
@@ -311,12 +416,16 @@ client.on("interactionCreate", async (interaction) => {
 
 client.on("messageCreate", (message) => {
 
-    if (message.author.bot) return;
+    if (message.author.bot) {
+        return;
+    }
 
 
     if (message.content === "!ping") {
 
-        message.reply("🏓 Pong !");
+        message.reply(
+            "🏓 Pong !"
+        );
 
     }
 
@@ -326,4 +435,6 @@ client.on("messageCreate", (message) => {
 // CONNEXION DISCORD
 // ==================================================
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(
+    process.env.DISCORD_TOKEN
+);
