@@ -12,6 +12,9 @@ const http = require("http");
 
 const GUILD_ID = "1550531386295718060";
 
+const RICK_ROLL_GIF =
+    "https://c.tenor.com/x8v1oNUOmg4AAAAd/tenor.gif";
+
 // ===============================
 // CLIENT DISCORD
 // ===============================
@@ -49,7 +52,21 @@ server.listen(PORT, "0.0.0.0", () => {
 const commands = [
     new SlashCommandBuilder()
         .setName("ping")
-        .setDescription("Vérifie si DAVID BOT répond.")
+        .setDescription("Vérifie si DAVID BOT répond."),
+
+    new SlashCommandBuilder()
+        .setName("help")
+        .setDescription("Affiche les commandes disponibles."),
+
+    new SlashCommandBuilder()
+        .setName("rick-roll")
+        .setDescription("Rick Roll quelqu'un 😈")
+        .addUserOption(option =>
+            option
+                .setName("utilisateur")
+                .setDescription("La personne à Rick Roll")
+                .setRequired(false)
+        )
 ];
 
 // ===============================
@@ -66,7 +83,10 @@ client.once("ready", async () => {
 
         console.log("✅ Commandes slash enregistrées !");
     } catch (error) {
-        console.error("❌ Erreur lors de l'enregistrement des commandes :", error);
+        console.error(
+            "❌ Erreur lors de l'enregistrement des commandes :",
+            error
+        );
     }
 });
 
@@ -77,8 +97,46 @@ client.once("ready", async () => {
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
+    // ===========================
+    // /ping
+    // ===========================
+
     if (interaction.commandName === "ping") {
         await interaction.reply("🏓 Pong !");
+    }
+
+    // ===========================
+    // /help
+    // ===========================
+
+    if (interaction.commandName === "help") {
+        await interaction.reply({
+            content:
+                "🤖 **DAVID BOT — COMMANDES**\n\n" +
+                "🏓 `/ping` — Vérifie si le bot répond.\n" +
+                "📖 `/help` — Affiche cette aide.\n" +
+                "😈 `/rick-roll` — Rick Roll quelqu'un.\n" +
+                "🎯 `/rick-roll @utilisateur` — Rick Roll une personne précise.",
+            ephemeral: false
+        });
+    }
+
+    // ===========================
+    // /rick-roll
+    // ===========================
+
+    if (interaction.commandName === "rick-roll") {
+        const utilisateur = interaction.options.getUser("utilisateur");
+
+        if (utilisateur) {
+            await interaction.reply(
+                `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
+            );
+        } else {
+            await interaction.reply(
+                `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
+            );
+        }
     }
 });
 
