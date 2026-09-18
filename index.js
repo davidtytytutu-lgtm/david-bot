@@ -18,8 +18,6 @@ const GITHUB_REPO =
 const RICK_ROLL_V1 =
     "https://c.tenor.com/x8v1oNUOmg4AAAAd/tenor.gif";
 
-const RICK_ROLL_V2 =
-    "https://github.com/davidtytytutu-lgtm/david-bot/raw/refs/heads/main/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20(Official%20Music%20Video)%20(1987).mp4";
 
 // ==================================================
 // CLIENT DISCORD
@@ -67,7 +65,7 @@ const commands = [
 
     new SlashCommandBuilder()
         .setName("rick-roll")
-        .setDescription("Rick Roll quelqu'un 😈")
+        .setDescription("Rick Roll quelqu'un ")
         .addUserOption(option =>
             option
                 .setName("utilisateur")
@@ -76,12 +74,8 @@ const commands = [
         ),
 
     new SlashCommandBuilder()
-        .setName("rick-roll-v2")
-        .setDescription("La version vidéo du Rick Roll 🎵"),
-
-    new SlashCommandBuilder()
         .setName("meme")
-        .setDescription("Envoie un meme aléatoire 😂")
+        .setDescription("Envoie un meme aléatoire ")
 ];
 
 // ==================================================
@@ -155,9 +149,6 @@ client.on("interactionCreate", async (interaction) => {
 
                 "🎯 `/rick-roll utilisateur:@nom`\n" +
                 "→ Rick Roll une personne précise.\n\n" +
-
-                "🎵 `/rick-roll-v2`\n" +
-                "→ Version vidéo du Rick Roll.\n\n" +
 
                 "😂 `/meme`\n" +
                 "→ Envoie un meme aléatoire depuis le dossier GitHub `meme/`.",
