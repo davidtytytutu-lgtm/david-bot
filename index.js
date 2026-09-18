@@ -1,5 +1,20 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+const {
+    Client,
+    GatewayIntentBits,
+    SlashCommandBuilder
+} = require("discord.js");
+
 const http = require("http");
+
+// ===============================
+// CONFIGURATION
+// ===============================
+
+const GUILD_ID = "1550531386295718060";
+
+// ===============================
+// CLIENT DISCORD
+// ===============================
 
 const client = new Client({
     intents: [
@@ -9,7 +24,10 @@ const client = new Client({
     ]
 });
 
-// Petit serveur HTTP pour Render
+// ===============================
+// SERVEUR HTTP POUR RENDER
+// ===============================
+
 const PORT = process.env.PORT || 10000;
 
 const server = http.createServer((req, res) => {
@@ -24,9 +42,49 @@ server.listen(PORT, "0.0.0.0", () => {
     console.log(`🌐 Serveur HTTP démarré sur le port ${PORT}`);
 });
 
-client.once("ready", () => {
+// ===============================
+// COMMANDES SLASH
+// ===============================
+
+const commands = [
+    new SlashCommandBuilder()
+        .setName("ping")
+        .setDescription("Vérifie si DAVID BOT répond.")
+];
+
+// ===============================
+// BOT PRÊT
+// ===============================
+
+client.once("ready", async () => {
     console.log(`🤖 DAVID BOT connecté en tant que ${client.user.tag}`);
+
+    try {
+        const guild = await client.guilds.fetch(GUILD_ID);
+
+        await guild.commands.set(commands);
+
+        console.log("✅ Commandes slash enregistrées !");
+    } catch (error) {
+        console.error("❌ Erreur lors de l'enregistrement des commandes :", error);
+    }
 });
+
+// ===============================
+// COMMANDES SLASH
+// ===============================
+
+client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === "ping") {
+        await interaction.reply("🏓 Pong !");
+    }
+});
+
+// ===============================
+// ANCIENNE COMMANDE !PING
+// ===============================
 
 client.on("messageCreate", (message) => {
     if (message.author.bot) return;
@@ -35,5 +93,9 @@ client.on("messageCreate", (message) => {
         message.reply("🏓 Pong !");
     }
 });
+
+// ===============================
+// CONNEXION
+// ===============================
 
 client.login(process.env.DISCORD_TOKEN);
