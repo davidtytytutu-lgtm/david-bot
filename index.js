@@ -23,33 +23,17 @@ const TIKTOK =
 const NEOCITIES =
     "https://neocities.org/site/david-officiel";
 
-/* =========================
-   HEARTBEAT
-========================= */
-
 const HEARTBEAT_URL =
     "https://david-bot-heartbeat.onrender.com/heartbeat";
 
 const HEARTBEAT_DELAY = 10000;
-
-/* =========================
-   ROLES
-========================= */
 
 const ROLES = {
     wojak: "1550800068767121438",
     troll: "1550796528942317648"
 };
 
-/* =========================
-   START TIME
-========================= */
-
 const BOT_START_TIME = Date.now();
-
-/* =========================
-   DISCORD CLIENT
-========================= */
 
 const client = new Client({
     intents: [
@@ -59,15 +43,14 @@ const client = new Client({
     ]
 });
 
-/* =========================
-   HTTP SERVER
-========================= */
-
 const PORT = process.env.PORT || 10000;
 
-const server = http.createServer((req, res) => {
 
-    /* ===== HEARTBEAT ===== */
+/* =========================================================
+   SERVEUR HTTP
+========================================================= */
+
+const server = http.createServer((req, res) => {
 
     if (req.url === "/heartbeat") {
 
@@ -92,7 +75,6 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    /* ===== PAGE PRINCIPALE ===== */
 
     if (req.url === "/") {
 
@@ -107,14 +89,16 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    /* ===== 404 ===== */
 
     res.writeHead(404, {
         "Content-Type": "text/plain; charset=utf-8"
     });
 
-    res.end("404 - Not Found");
+    res.end(
+        "404 - Not Found"
+    );
 });
+
 
 server.listen(
     PORT,
@@ -128,9 +112,10 @@ server.listen(
     }
 );
 
-/* =========================
-   HEARTBEAT FUNCTION
-========================= */
+
+/* =========================================================
+   HEARTBEAT
+========================================================= */
 
 async function sendHeartbeatToServer() {
 
@@ -148,6 +133,7 @@ async function sendHeartbeatToServer() {
             throw new Error(
                 `HTTP ${response.status}`
             );
+
         }
 
         const data =
@@ -170,11 +156,13 @@ async function sendHeartbeatToServer() {
         }, 30000);
 
     }
+
 }
 
-/* =========================
-   FORMAT UPTIME
-========================= */
+
+/* =========================================================
+   UPTIME
+========================================================= */
 
 function formatUptime(ms) {
 
@@ -196,405 +184,232 @@ function formatUptime(ms) {
 
     seconds %= 60;
 
-    return (
-        `${days}j ` +
-        `${hours}h ` +
-        `${minutes}m ` +
-        `${seconds}s`
-    );
+    return `${days}j ${hours}h ${minutes}m ${seconds}s`;
 }
 
-/* =========================
-   SLASH COMMANDS
-========================= */
+
+/* =========================================================
+   COMMANDES SLASH
+========================================================= */
 
 const commands = [
 
-    /* =========================
-       PING
-    ========================= */
-
     new SlashCommandBuilder()
         .setName("ping")
-        .setDescription(
-            "Vérifie si DAVID BOT répond."
-        ),
-
-    /* =========================
-       HELP
-    ========================= */
+        .setDescription("Vérifie si DAVID BOT répond"),
 
     new SlashCommandBuilder()
         .setName("help")
-        .setDescription(
-            "Affiche les commandes disponibles."
-        ),
-
-    /* =========================
-       RICK ROLL
-    ========================= */
+        .setDescription("Affiche la liste des commandes"),
 
     new SlashCommandBuilder()
         .setName("rick-roll")
-        .setDescription(
-            "Rick Roll quelqu'un 😈"
-        )
-        .addUserOption(option =>
-            option
-                .setName("utilisateur")
-                .setDescription(
-                    "La personne à Rick Roll"
-                )
-                .setRequired(false)
-        ),
-
-    /* =========================
-       MEME
-    ========================= */
+        .setDescription("😈 Tu t'es fait Rick Roll"),
 
     new SlashCommandBuilder()
         .setName("meme")
-        .setDescription(
-            "Envoie un meme aléatoire 😂"
-        ),
-
-    /* =========================
-       WEB
-    ========================= */
+        .setDescription("Envoie un meme aléatoire"),
 
     new SlashCommandBuilder()
         .setName("web")
-        .setDescription(
-            "Envoie le site officiel de DAVID."
-        ),
-
-    /* =========================
-       TIKTOK
-    ========================= */
+        .setDescription("Affiche le site de David"),
 
     new SlashCommandBuilder()
         .setName("tiktok")
-        .setDescription(
-            "Envoie le TikTok de DAVID."
-        ),
-
-    /* =========================
-       NEOCITIES
-    ========================= */
+        .setDescription("Affiche le TikTok de David"),
 
     new SlashCommandBuilder()
         .setName("neocities")
-        .setDescription(
-            "Envoie le profil Neocities de DAVID."
-        ),
-
-    /* =========================
-       ROLE
-    ========================= */
+        .setDescription("Affiche la page Neocities"),
 
     new SlashCommandBuilder()
         .setName("role")
-        .setDescription(
-            "Obtenir ou retirer un rôle."
-        )
+        .setDescription("Active ou désactive un rôle")
         .addStringOption(option =>
             option
                 .setName("role")
-                .setDescription(
-                    "Choisis le rôle"
-                )
+                .setDescription("Choisis le rôle")
                 .setRequired(true)
                 .addChoices(
                     {
-                        name: "🗿 Wojak",
+                        name: "Wojak",
                         value: "wojak"
                     },
                     {
-                        name: "🧌 Troll",
+                        name: "Troll",
                         value: "troll"
                     }
                 )
         ),
 
-    /* =========================
-       BOTINFO
-    ========================= */
-
     new SlashCommandBuilder()
         .setName("botinfo")
-        .setDescription(
-            "Affiche les informations de DAVID BOT."
-        ),
-
-    /* =========================
-       UPTIME
-    ========================= */
+        .setDescription("Informations sur DAVID BOT"),
 
     new SlashCommandBuilder()
         .setName("uptime")
-        .setDescription(
-            "Affiche depuis combien de temps DAVID BOT fonctionne."
-        ),
-
-    /* =========================
-       INVITE
-    ========================= */
+        .setDescription("Affiche depuis combien de temps le bot est en ligne"),
 
     new SlashCommandBuilder()
         .setName("invite")
-        .setDescription(
-            "Donne le lien pour inviter DAVID BOT."
-        ),
-
-    /* =========================
-       ROLES
-    ========================= */
+        .setDescription("Obtenir le lien d'invitation du bot"),
 
     new SlashCommandBuilder()
         .setName("roles")
-        .setDescription(
-            "Affiche les rôles disponibles."
-        ),
-
-    /* =========================
-       USERINFO
-    ========================= */
+        .setDescription("Liste les rôles disponibles"),
 
     new SlashCommandBuilder()
         .setName("userinfo")
-        .setDescription(
-            "Affiche les informations d'un membre."
-        )
+        .setDescription("Informations sur un utilisateur")
         .addUserOption(option =>
             option
                 .setName("utilisateur")
-                .setDescription(
-                    "Utilisateur à regarder"
-                )
+                .setDescription("Utilisateur à regarder")
                 .setRequired(false)
         ),
 
-    /* =========================
-       SERVERINFO
-    ========================= */
-
     new SlashCommandBuilder()
         .setName("serverinfo")
-        .setDescription(
-            "Affiche les informations du serveur."
-        ),
-
-    /* =========================
-       COINFLIP
-    ========================= */
+        .setDescription("Informations sur le serveur"),
 
     new SlashCommandBuilder()
         .setName("coinflip")
-        .setDescription(
-            "Lance une pièce."
-        ),
-
-    /* =========================
-       DICE
-    ========================= */
+        .setDescription("Lance une pièce"),
 
     new SlashCommandBuilder()
         .setName("dice")
-        .setDescription(
-            "Lance un dé."
-        )
+        .setDescription("Lance un dé")
         .addIntegerOption(option =>
             option
                 .setName("faces")
-                .setDescription(
-                    "Nombre de faces du dé"
-                )
+                .setDescription("Nombre de faces")
                 .setRequired(false)
                 .setMinValue(2)
                 .setMaxValue(100)
         ),
 
-    /* =========================
-       SHIP
-    ========================= */
-
     new SlashCommandBuilder()
         .setName("ship")
-        .setDescription(
-            "Calcule un pourcentage d'affinité ❤️"
-        )
+        .setDescription("Calcule le pourcentage de compatibilité")
         .addUserOption(option =>
             option
                 .setName("utilisateur")
-                .setDescription(
-                    "Première personne"
-                )
+                .setDescription("Première personne")
                 .setRequired(true)
         )
         .addUserOption(option =>
             option
                 .setName("utilisateur2")
-                .setDescription(
-                    "Deuxième personne"
-                )
+                .setDescription("Deuxième personne")
                 .setRequired(true)
         ),
-
-    /* =========================
-       SAY
-    ========================= */
 
     new SlashCommandBuilder()
         .setName("say")
-        .setDescription(
-            "Fait parler DAVID BOT."
-        )
+        .setDescription("Fait parler le bot")
         .addStringOption(option =>
             option
                 .setName("texte")
-                .setDescription(
-                    "Texte à envoyer"
-                )
+                .setDescription("Texte à envoyer")
                 .setRequired(true)
-                .setMaxLength(2000)
         ),
-
-    /* =========================
-       TTS
-    ========================= */
 
     new SlashCommandBuilder()
         .setName("tts")
-        .setDescription(
-            "Fait lire le texte par Discord."
-        )
+        .setDescription("Envoie un message TTS")
         .addStringOption(option =>
             option
                 .setName("texte")
-                .setDescription(
-                    "Texte à faire lire"
-                )
+                .setDescription("Texte à lire")
                 .setRequired(true)
-                .setMaxLength(2000)
         ),
-
-    /* =========================
-       REPO
-    ========================= */
 
     new SlashCommandBuilder()
         .setName("repo")
-        .setDescription(
-            "Affiche les informations d'un dépôt GitHub."
-        )
+        .setDescription("Informations sur un dépôt GitHub")
         .addStringOption(option =>
             option
                 .setName("repo")
-                .setDescription(
-                    "Exemple : davidtytytutu-lgtm/david-bot"
-                )
+                .setDescription("Exemple : davidtytytutu-lgtm/david-bot")
                 .setRequired(true)
         ),
-
-    /* =========================
-       QR
-    ========================= */
 
     new SlashCommandBuilder()
         .setName("qr")
-        .setDescription(
-            "Génère un QR code."
-        )
+        .setDescription("Génère un QR code")
         .addStringOption(option =>
             option
                 .setName("texte")
-                .setDescription(
-                    "Texte ou URL à mettre dans le QR code"
-                )
+                .setDescription("Texte ou URL à encoder")
                 .setRequired(true)
-                .setMaxLength(2000)
         ),
-
-    /* =========================
-       IP
-    ========================= */
 
     new SlashCommandBuilder()
         .setName("ip")
-        .setDescription(
-            "Recherche les informations publiques d'une adresse IP."
-        )
+        .setDescription("Informations sur une adresse IP")
         .addStringOption(option =>
             option
                 .setName("ip")
-                .setDescription(
-                    "Adresse IP à rechercher"
-                )
+                .setDescription("Adresse IPv4")
                 .setRequired(true)
         )
 
-];
+].map(command => command.toJSON());
 
-/* =========================
+
+/* =========================================================
    READY
-========================= */
+========================================================= */
 
-client.once(
-    "ready",
-    async () => {
+client.once("ready", async () => {
+
+    console.log(
+        `🤖 DAVID BOT connecté en tant que ${client.user.tag}`
+    );
+
+    try {
+
+        const guild =
+            await client.guilds.fetch(GUILD_ID);
+
+        await guild.commands.set(commands);
 
         console.log(
-            `🤖 DAVID BOT connecté en tant que ${client.user.tag}`
+            `✅ ${commands.length} commandes enregistrées`
         );
 
-        try {
+    } catch (error) {
 
-            const guild =
-                await client.guilds.fetch(
-                    GUILD_ID
-                );
-
-            await guild.commands.set(
-                commands
-            );
-
-            console.log(
-                "✅ Commandes slash enregistrées !"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "❌ Erreur commandes :",
-                error
-            );
-
-        }
-
-        setTimeout(() => {
-            sendHeartbeatToServer();
-        }, 5000);
+        console.error(
+            "❌ Erreur commandes :",
+            error
+        );
 
     }
-);
 
-/* =========================
+    setTimeout(() => {
+        sendHeartbeatToServer();
+    }, 5000);
+
+});
+
+
+/* =========================================================
    INTERACTIONS
-========================= */
+========================================================= */
 
 client.on(
     "interactionCreate",
     async interaction => {
 
-        if (
-            !interaction.isChatInputCommand()
-        ) {
+        if (!interaction.isChatInputCommand()) {
             return;
         }
 
-        /* =========================
-           PING
-        ========================= */
+
+        /* =====================================================
+           /ping
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -602,98 +417,74 @@ client.on(
         ) {
 
             await interaction.reply(
-                "🏓 Pong !"
+                `🏓 Pong !\n📡 Latence : ${client.ws.ping}ms`
             );
 
             return;
         }
 
-        /* =========================
-           HELP
-        ========================= */
+
+        /* =====================================================
+           /help
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "help"
         ) {
 
-            await interaction.reply({
+            await interaction.reply(
+                `🤖 **DAVID BOT — COMMANDES**\n\n` +
 
-                content:
-                    "🤖 **DAVID BOT — COMMANDES**\n\n" +
+                `🏓 **/ping** — Vérifie le bot\n` +
+                `❓ **/help** — Affiche cette aide\n` +
+                `😈 **/rick-roll** — Rick Roll\n` +
+                `😂 **/meme** — Meme aléatoire\n` +
+                `🌐 **/web** — Site de David\n` +
+                `🎵 **/tiktok** — TikTok\n` +
+                `🏠 **/neocities** — Neocities\n` +
+                `🎭 **/role** — Gestion des rôles\n\n` +
 
-                    "🛠️ **UTILITAIRE**\n" +
-                    "`/ping` — Vérifier le bot\n" +
-                    "`/botinfo` — Informations du bot\n" +
-                    "`/uptime` — Temps en ligne\n" +
-                    "`/invite` — Inviter le bot\n" +
-                    "`/userinfo` — Infos utilisateur\n" +
-                    "`/serverinfo` — Infos serveur\n\n" +
-
-                    "🎭 **RÔLES**\n" +
-                    "`/role` — Ajouter/retirer un rôle\n" +
-                    "`/roles` — Voir les rôles disponibles\n\n" +
-
-                    "😂 **FUN**\n" +
-                    "`/meme` — Meme aléatoire\n" +
-                    "`/rick-roll` — Rick Roll\n" +
-                    "`/coinflip` — Pile ou face\n" +
-                    "`/dice` — Lancer un dé\n" +
-                    "`/ship` — Affinité entre deux personnes\n" +
-                    "`/say` — Faire parler le bot\n" +
-                    "`/tts` — Faire lire un texte par Discord\n\n" +
-
-                    "💻 **CODING**\n" +
-                    "`/repo` — Informations GitHub\n" +
-                    "`/qr` — Générer un QR code\n\n" +
-
-                    "🌐 **WEB**\n" +
-                    "`/web` — Site officiel\n" +
-                    "`/tiktok` — TikTok\n" +
-                    "`/neocities` — Neocities\n" +
-                    "`/ip` — Informations publiques sur une IP",
-
-                ephemeral: false
-
-            });
+                `🤖 **/botinfo** — Infos du bot\n` +
+                `⏱️ **/uptime** — Temps en ligne\n` +
+                `🔗 **/invite** — Invitation\n` +
+                `🎭 **/roles** — Liste des rôles\n` +
+                `👤 **/userinfo** — Infos utilisateur\n` +
+                `🏠 **/serverinfo** — Infos serveur\n` +
+                `🪙 **/coinflip** — Pile ou face\n` +
+                `🎲 **/dice** — Lance un dé\n` +
+                `❤️ **/ship** — Compatibilité\n` +
+                `💬 **/say** — Faire parler le bot\n` +
+                `🔊 **/tts** — Message TTS\n` +
+                `📦 **/repo** — Infos GitHub\n` +
+                `🔳 **/qr** — QR code\n` +
+                `🌍 **/ip** — Infos IP`
+            );
 
             return;
         }
 
-        /* =========================
-           RICK ROLL
-        ========================= */
+
+        /* =====================================================
+           /rick-roll
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "rick-roll"
         ) {
 
-            const utilisateur =
-                interaction.options.getUser(
-                    "utilisateur"
-                );
-
-            if (utilisateur) {
-
-                await interaction.reply(
-                    `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
-                );
-
-            } else {
-
-                await interaction.reply(
-                    `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
-                );
-
-            }
+            await interaction.reply(
+                RICK_ROLL_GIF
+            );
 
             return;
         }
 
-        /* =========================
-           MEME
-        ========================= */
+
+        /* =====================================================
+           /meme
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -706,19 +497,13 @@ client.on(
 
                 const response =
                     await fetch(
-                        GITHUB_MEME_REPO,
-                        {
-                            headers: {
-                                "User-Agent":
-                                    "DAVID-BOT"
-                            }
-                        }
+                        GITHUB_MEME_REPO
                     );
 
                 if (!response.ok) {
 
                     throw new Error(
-                        `GitHub HTTP ${response.status}`
+                        `HTTP ${response.status}`
                     );
 
                 }
@@ -727,42 +512,22 @@ client.on(
                     await response.json();
 
                 const memes =
-                    files.filter(file => {
+                    files.filter(file =>
+                        file.type === "file" &&
+                        /\.(jpg|jpeg|png|gif|webp|mp4|webm)$/i
+                            .test(file.name)
+                    );
 
-                        if (
-                            file.type !==
-                            "file"
-                        ) {
-                            return false;
-                        }
-
-                        const name =
-                            file.name.toLowerCase();
-
-                        return (
-                            name.endsWith(".jpg") ||
-                            name.endsWith(".jpeg") ||
-                            name.endsWith(".png") ||
-                            name.endsWith(".gif") ||
-                            name.endsWith(".webp") ||
-                            name.endsWith(".mp4") ||
-                            name.endsWith(".webm")
-                        );
-
-                    });
-
-                if (
-                    memes.length === 0
-                ) {
+                if (memes.length === 0) {
 
                     await interaction.editReply(
-                        "❌ Aucun meme trouvé dans `meme/`."
+                        "❌ Aucun meme trouvé."
                     );
 
                     return;
                 }
 
-                const meme =
+                const random =
                     memes[
                         Math.floor(
                             Math.random() *
@@ -770,17 +535,14 @@ client.on(
                         )
                     ];
 
-                const memeURL =
-                    `https://raw.githubusercontent.com/davidtytytutu-lgtm/david-bot/refs/heads/main/meme/${encodeURIComponent(meme.name)}`;
-
                 await interaction.editReply(
-                    `😂 **Meme aléatoire : ${meme.name}**\n\n${memeURL}`
+                    `😂 **MEME RANDOM**\n${random.download_url}`
                 );
 
             } catch (error) {
 
                 console.error(
-                    "❌ Erreur /meme :",
+                    "❌ Meme :",
                     error
                 );
 
@@ -793,9 +555,10 @@ client.on(
             return;
         }
 
-        /* =========================
-           WEB
-        ========================= */
+
+        /* =====================================================
+           /web
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -803,15 +566,16 @@ client.on(
         ) {
 
             await interaction.reply(
-                `🌐 **DAVID OFFICIEL**\n${WEBSITE}`
+                `🌐 **SITE DE DAVID**\n${WEBSITE}`
             );
 
             return;
         }
 
-        /* =========================
-           TIKTOK
-        ========================= */
+
+        /* =====================================================
+           /tiktok
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -819,15 +583,16 @@ client.on(
         ) {
 
             await interaction.reply(
-                `🎵 **TikTok de DAVID**\n${TIKTOK}`
+                `🎵 **TIKTOK**\n${TIKTOK}`
             );
 
             return;
         }
 
-        /* =========================
-           NEOCITIES
-        ========================= */
+
+        /* =====================================================
+           /neocities
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -835,15 +600,16 @@ client.on(
         ) {
 
             await interaction.reply(
-                `🌐 **Profil Neocities de DAVID**\n${NEOCITIES}`
+                `🏠 **NEOCITIES**\n${NEOCITIES}`
             );
 
             return;
         }
 
-        /* =========================
-           ROLE
-        ========================= */
+
+        /* =====================================================
+           /role
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -858,65 +624,46 @@ client.on(
             const roleId =
                 ROLES[roleName];
 
+            const role =
+                interaction.guild.roles.cache.get(
+                    roleId
+                );
+
+            if (!role) {
+
+                await interaction.reply({
+                    content:
+                        "❌ Rôle introuvable.",
+                    ephemeral: true
+                });
+
+                return;
+            }
+
             try {
 
-                const role =
-                    await interaction.guild.roles.fetch(
-                        roleId
-                    );
-
-                if (!role) {
-
-                    await interaction.reply({
-                        content:
-                            "❌ Rôle introuvable.",
-                        ephemeral: true
-                    });
-
-                    return;
-                }
-
                 if (
-                    role.position >=
-                    interaction.guild.members.me.roles.highest.position
-                ) {
-
-                    await interaction.reply({
-                        content:
-                            "❌ Je ne peux pas gérer ce rôle car il est au-dessus de mon rôle.",
-                        ephemeral: true
-                    });
-
-                    return;
-                }
-
-                const member =
-                    await interaction.guild.members.fetch(
-                        interaction.user.id
-                    );
-
-                if (
-                    member.roles.cache.has(
+                    interaction.member.roles.cache.has(
                         roleId
                     )
                 ) {
 
-                    await member.roles.remove(
+                    await interaction.member.roles.remove(
                         role
                     );
 
                     await interaction.reply(
-                        `❌ ${role} a été retiré de ${interaction.user}.`
+                        `❌ Rôle **${role.name}** retiré.`
                     );
 
                 } else {
 
-                    await member.roles.add(
+                    await interaction.member.roles.add(
                         role
                     );
 
                     await interaction.reply(
-                        `✅ ${role} a été ajouté à ${interaction.user}.`
+                        `✅ Rôle **${role.name}** ajouté !`
                     );
 
                 }
@@ -924,77 +671,68 @@ client.on(
             } catch (error) {
 
                 console.error(
-                    "❌ Erreur /role :",
+                    "❌ Role :",
                     error
                 );
 
-                if (
-                    !interaction.replied
-                ) {
-
-                    await interaction.reply({
-                        content:
-                            "❌ Impossible de modifier ton rôle.",
-                        ephemeral: true
-                    });
-
-                }
+                await interaction.reply({
+                    content:
+                        "❌ Impossible de modifier ce rôle. Vérifie la permission **Gérer les rôles** et la hiérarchie des rôles.",
+                    ephemeral: true
+                });
 
             }
 
             return;
         }
 
-        /* =========================
-           BOTINFO
-        ========================= */
+
+        /* =====================================================
+           /botinfo
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "botinfo"
         ) {
 
-            await interaction.reply({
-
-                content:
-                    "🤖 **DAVID BOT**\n\n" +
-                    "👨‍💻 Créateur : David\n" +
-                    "⚙️ Technologie : Discord.js\n" +
-                    "🟢 Statut : En ligne\n" +
-                    "🌐 Hébergement : Render\n" +
-                    "💻 Code : GitHub\n" +
-                    "📦 Version : 1.0.0",
-
-                ephemeral: false
-
-            });
+            await interaction.reply(
+                `🤖 **DAVID BOT**\n\n` +
+                `👤 Créateur : **David**\n` +
+                `📦 Version : **1.0.0**\n` +
+                `🟦 Discord.js : **14.25.1**\n` +
+                `☁️ Hébergement : **Render**\n` +
+                `💻 Code : **GitHub**`
+            );
 
             return;
         }
 
-        /* =========================
-           UPTIME
-        ========================= */
+
+        /* =====================================================
+           /uptime
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "uptime"
         ) {
 
-            const uptime =
-                Date.now() -
-                BOT_START_TIME;
-
             await interaction.reply(
-                `⏱️ **DAVID BOT est en ligne depuis :**\n\`${formatUptime(uptime)}\``
+                `⏱️ **DAVID BOT est en ligne depuis :**\n\n` +
+                `\`${formatUptime(
+                    Date.now() -
+                    BOT_START_TIME
+                )}\``
             );
 
             return;
         }
 
-        /* =========================
-           INVITE
-        ========================= */
+
+        /* =====================================================
+           /invite
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1005,15 +743,16 @@ client.on(
                 `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=268435456`;
 
             await interaction.reply(
-                `🤖 **Inviter DAVID BOT**\n${invite}`
+                `🔗 **INVITER DAVID BOT**\n${invite}`
             );
 
             return;
         }
 
-        /* =========================
-           ROLES
-        ========================= */
+
+        /* =====================================================
+           /roles
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1021,19 +760,18 @@ client.on(
         ) {
 
             await interaction.reply(
-                "🎭 **RÔLES DISPONIBLES**\n\n" +
-                "🗿 **Wojak**\n" +
-                "`/role role:Wojak`\n\n" +
-                "🧌 **Troll**\n" +
-                "`/role role:Troll`"
+                `🎭 **RÔLES DISPONIBLES**\n\n` +
+                `🤡 **Wojak**\n` +
+                `👹 **Troll**`
             );
 
             return;
         }
 
-        /* =========================
-           USERINFO
-        ========================= */
+
+        /* =====================================================
+           /userinfo
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1047,26 +785,38 @@ client.on(
                 interaction.user;
 
             const member =
-                await interaction.guild.members.fetch(
-                    user.id
-                );
+                await interaction.guild.members
+                    .fetch(user.id)
+                    .catch(() => null);
 
             await interaction.reply(
-                `👤 **USERINFO**\n\n` +
-                `👤 Utilisateur : ${user}\n` +
-                `🏷️ Nom : \`${user.username}\`\n` +
+                `👤 **INFORMATIONS UTILISATEUR**\n\n` +
+                `🧑 Nom : **${user.username}**\n` +
                 `🆔 ID : \`${user.id}\`\n` +
-                `📅 Compte créé : <t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
-                `📅 Arrivé sur le serveur : <t:${Math.floor(member.joinedTimestamp / 1000)}:F>\n` +
-                `🎭 Rôles : ${member.roles.cache.size - 1}`
+                `📅 Compte créé : <t:${Math.floor(
+                    user.createdTimestamp / 1000
+                )}:F>\n` +
+                `🎭 Rôles : **${
+                    member
+                        ? member.roles.cache.size - 1
+                        : 0
+                }**` +
+                (
+                    member
+                        ? `\n📥 Arrivé sur le serveur : <t:${Math.floor(
+                            member.joinedTimestamp / 1000
+                        )}:F>`
+                        : ""
+                )
             );
 
             return;
         }
 
-        /* =========================
-           SERVERINFO
-        ========================= */
+
+        /* =====================================================
+           /serverinfo
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1077,22 +827,25 @@ client.on(
                 interaction.guild;
 
             await interaction.reply(
-                `🏠 **SERVERINFO**\n\n` +
+                `🏠 **INFORMATIONS DU SERVEUR**\n\n` +
                 `📛 Nom : **${guild.name}**\n` +
                 `🆔 ID : \`${guild.id}\`\n` +
                 `👥 Membres : **${guild.memberCount}**\n` +
                 `💬 Salons : **${guild.channels.cache.size}**\n` +
                 `🎭 Rôles : **${guild.roles.cache.size}**\n` +
                 `👑 Propriétaire : <@${guild.ownerId}>\n` +
-                `📅 Créé : <t:${Math.floor(guild.createdTimestamp / 1000)}:F>`
+                `📅 Créé : <t:${Math.floor(
+                    guild.createdTimestamp / 1000
+                )}:F>`
             );
 
             return;
         }
 
-        /* =========================
-           COINFLIP
-        ========================= */
+
+        /* =====================================================
+           /coinflip
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1101,19 +854,20 @@ client.on(
 
             const result =
                 Math.random() < 0.5
-                    ? "🪙 **PILE !**"
-                    : "🪙 **FACE !**";
+                    ? "PILE 🪙"
+                    : "FACE 🪙";
 
             await interaction.reply(
-                result
+                `🪙 **La pièce tombe sur... ${result} !**`
             );
 
             return;
         }
 
-        /* =========================
-           DICE
-        ========================= */
+
+        /* =====================================================
+           /dice
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1131,16 +885,17 @@ client.on(
                 ) + 1;
 
             await interaction.reply(
-                `🎲 Dé **D${faces}**\n\n` +
-                `➡️ **${result}**`
+                `🎲 **D${faces}**\n\n` +
+                `➡️ Résultat : **${result}**`
             );
 
             return;
         }
 
-        /* =========================
-           SHIP
-        ========================= */
+
+        /* =====================================================
+           /ship
+        ===================================================== */
 
         if (
             interaction.commandName ===
@@ -1164,191 +919,122 @@ client.on(
 
             let message;
 
-            if (percentage >= 90) {
-                message = "💖 INCROYABLE !";
-            } else if (percentage >= 70) {
-                message = "❤️ Très bon duo !";
-            } else if (percentage >= 50) {
-                message = "💛 Ça peut fonctionner...";
-            } else if (percentage >= 30) {
-                message = "💀 C'est compliqué...";
+            if (percentage < 20) {
+                message = "💀 Même pas en rêve.";
+            } else if (percentage < 40) {
+                message = "😬 Ça semble compliqué...";
+            } else if (percentage < 60) {
+                message = "🤔 Peut-être ?";
+            } else if (percentage < 80) {
+                message = "❤️ Ça commence à devenir sérieux !";
+            } else if (percentage < 100) {
+                message = "💖 Très belle compatibilité !";
             } else {
-                message = "💔 Catastrophe.";
+                message = "💍 MARIAGE IMMÉDIAT !";
             }
 
             await interaction.reply(
-                `💘 **SHIP METER**\n\n` +
-                `${user1} ❤️ ${user2}\n\n` +
-                `💗 **${percentage}%**\n\n` +
+                `❤️ **SHIP METER**\n\n` +
+                `👤 ${user1}\n` +
+                `❤️\n` +
+                `👤 ${user2}\n\n` +
+                `💘 Compatibilité : **${percentage}%**\n\n` +
                 message
             );
 
             return;
         }
 
-        /* =========================
-           SAY
-        ========================= */
+
+        /* =====================================================
+           /say
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "say"
         ) {
 
-            const texte =
+            const text =
                 interaction.options.getString(
                     "texte"
                 );
 
-            await interaction.reply(
-                texte
-            );
+            await interaction.reply({
+                content: text,
+                allowedMentions: {
+                    parse: []
+                }
+            });
 
             return;
         }
 
-        /* =========================
-           TTS
-        ========================= */
+
+        /* =====================================================
+           /tts
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "tts"
         ) {
 
-            const texte =
+            const text =
                 interaction.options.getString(
                     "texte"
                 );
 
             await interaction.reply({
-                content: texte,
-                tts: true
+                content: text,
+                tts: true,
+                allowedMentions: {
+                    parse: []
+                }
             });
 
             return;
         }
 
-        /* =========================
-           GITHUB REPO
-        ========================= */
+
+        /* =====================================================
+           /repo
+        ===================================================== */
 
         if (
             interaction.commandName ===
             "repo"
         ) {
 
-            let repo =
+            const repoInput =
                 interaction.options.getString(
                     "repo"
-                );
-
-            repo = repo
-                .replace(
-                    /^https?:\/\/github\.com\//,
-                    ""
-                )
-                .replace(
-                    /\/$/,
-                    ""
-                );
-
-            const parts =
-                repo.split("/");
-
-            if (parts.length !== 2) {
-
-                await interaction.reply({
-                    content:
-                        "❌ Format incorrect.\nExemple : `/repo repo:davidtytytutu-lgtm/david-bot`",
-                    ephemeral: true
-                });
-
-                return;
-            }
-
-            const response =
-                await fetch(
-                    `https://api.github.com/repos/${parts[0]}/${parts[1]}`,
-                    {
-                        headers: {
-                            "User-Agent":
-                                "DAVID-BOT"
-                        }
-                    }
-                );
-
-            if (!response.ok) {
-
-                await interaction.reply({
-                    content:
-                        "❌ Dépôt GitHub introuvable.",
-                    ephemeral: true
-                });
-
-                return;
-            }
-
-            const data =
-                await response.json();
-
-            await interaction.reply(
-                `💻 **${data.full_name}**\n\n` +
-                `📖 ${data.description || "Aucune description."}\n\n` +
-                `⭐ Stars : **${data.stargazers_count}**\n` +
-                `🍴 Forks : **${data.forks_count}**\n` +
-                `🐛 Issues : **${data.open_issues_count}**\n\n` +
-                `🔗 ${data.html_url}`
-            );
-
-            return;
-        }
-
-        /* =========================
-           QR CODE
-        ========================= */
-
-        if (
-            interaction.commandName ===
-            "qr"
-        ) {
-
-            const texte =
-                interaction.options.getString(
-                    "texte"
-                );
-
-            const qrURL =
-                `https://quickchart.io/qr?text=${encodeURIComponent(texte)}&size=500`;
-
-            await interaction.reply(
-                `🔳 **QR CODE**\n\n${qrURL}`
-            );
-
-            return;
-        }
-
-        /* =========================
-           IP LOOKUP
-        ========================= */
-
-        if (
-            interaction.commandName ===
-            "ip"
-        ) {
-
-            const ip =
-                interaction.options.getString(
-                    "ip"
-                );
+                ).trim();
 
             await interaction.deferReply();
 
             try {
 
+                let repo =
+                    repoInput
+                        .replace(
+                            /^https?:\/\/(www\.)?github\.com\//i,
+                            ""
+                        )
+                        .replace(
+                            /\/$/,
+                            ""
+                        );
+
                 const response =
                     await fetch(
-                        `https://ipapi.co/${encodeURIComponent(ip)}/json/`
+                        `https://api.github.com/repos/${repo}`,
+                        {
+                            headers: {
+                                "User-Agent":
+                                    "DAVID-BOT"
+                            }
+                        }
                     );
 
                 if (!response.ok) {
@@ -1356,29 +1042,167 @@ client.on(
                     throw new Error(
                         `HTTP ${response.status}`
                     );
+
                 }
 
                 const data =
                     await response.json();
 
-                if (data.error) {
+                await interaction.editReply(
+                    `💻 **GITHUB REPOSITORY**\n\n` +
+                    `📦 **${data.full_name}**\n` +
+                    `⭐ Stars : **${data.stargazers_count}**\n` +
+                    `🍴 Forks : **${data.forks_count}**\n` +
+                    `🐛 Issues : **${data.open_issues_count}**\n` +
+                    `📝 Description : **${data.description || "Aucune"}**\n\n` +
+                    `🔗 ${data.html_url}`
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Repo :",
+                    error
+                );
+
+                await interaction.editReply(
+                    "❌ Dépôt GitHub introuvable."
+                );
+
+            }
+
+            return;
+        }
+
+
+        /* =====================================================
+           /qr
+        ===================================================== */
+
+        if (
+            interaction.commandName ===
+            "qr"
+        ) {
+
+            const text =
+                interaction.options.getString(
+                    "texte"
+                );
+
+            const qr =
+                `https://quickchart.io/qr?text=${encodeURIComponent(
+                    text
+                )}&size=500`;
+
+            await interaction.reply(
+                `🔳 **QR CODE**\n${qr}`
+            );
+
+            return;
+        }
+
+
+        /* =====================================================
+           /ip
+        ===================================================== */
+
+        if (
+            interaction.commandName ===
+            "ip"
+        ) {
+
+            const ip =
+                interaction.options
+                    .getString("ip")
+                    .trim();
+
+            await interaction.deferReply();
+
+            try {
+
+                /* =============================================
+                   VALIDATION IPv4
+                ============================================= */
+
+                const ipv4 =
+                    /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
+
+                if (!ipv4.test(ip)) {
 
                     await interaction.editReply(
-                        "❌ Adresse IP invalide ou introuvable."
+                        `❌ **Adresse IPv4 invalide.**\n\n` +
+                        `📡 IP testée : \`${ip}\``
                     );
 
                     return;
                 }
 
+
+                /* =============================================
+                   IP PRIVÉE
+                ============================================= */
+
+                const privateIP =
+                    /^(10\.)|^(192\.168\.)|^(172\.(1[6-9]|2[0-9]|3[0-1])\.)/;
+
+                if (privateIP.test(ip)) {
+
+                    await interaction.editReply(
+                        `🏠 **IP PRIVÉE**\n\n` +
+                        `📡 IP : \`${ip}\`\n` +
+                        `🔒 Type : **IPv4 privée**\n\n` +
+                        `Cette adresse appartient à un réseau local et n'est pas directement accessible depuis Internet.`
+                    );
+
+                    return;
+                }
+
+
+                /* =============================================
+                   IP PUBLIQUE
+                ============================================= */
+
+                const response =
+                    await fetch(
+                        `https://ipwho.is/${encodeURIComponent(
+                            ip
+                        )}`
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+
+                }
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    await interaction.editReply(
+                        `❌ Adresse IP invalide ou informations indisponibles.\n\n` +
+                        `📡 IP : \`${ip}\``
+                    );
+
+                    return;
+                }
+
+
                 await interaction.editReply(
                     `🌐 **INFORMATIONS IP**\n\n` +
-                    `📡 IP : \`${data.ip || ip}\`\n` +
-                    `🌍 Pays : **${data.country_name || "Inconnu"}**\n` +
+                    `📡 IP : \`${data.ip}\`\n` +
+                    `🔒 Type : **IPv4 publique**\n` +
+                    `🌍 Pays : **${data.country || "Inconnu"}**\n` +
                     `🏙️ Ville : **${data.city || "Inconnue"}**\n` +
                     `🗺️ Région : **${data.region || "Inconnue"}**\n` +
                     `📮 Code postal : **${data.postal || "Inconnu"}**\n` +
-                    `🏢 FAI/Organisation : **${data.org || "Inconnu"}**\n` +
-                    `🕐 Fuseau : **${data.timezone || "Inconnu"}**`
+                    `🏢 Organisation : **${data.connection?.org || "Inconnue"}**\n` +
+                    `📡 FAI : **${data.connection?.isp || "Inconnu"}**\n` +
+                    `🕐 Fuseau : **${data.timezone?.id || "Inconnu"}**`
                 );
 
             } catch (error) {
@@ -1389,7 +1213,8 @@ client.on(
                 );
 
                 await interaction.editReply(
-                    "❌ Impossible de récupérer les informations de cette IP."
+                    `❌ Impossible de récupérer les informations de cette IP.\n\n` +
+                    `📡 IP testée : \`${ip}\``
                 );
 
             }
@@ -1400,15 +1225,18 @@ client.on(
     }
 );
 
-/* =========================
-   !PING
-========================= */
+
+/* =========================================================
+   ANCIENNE COMMANDE !ping
+========================================================= */
 
 client.on(
     "messageCreate",
     message => {
 
-        if (message.author.bot) {
+        if (
+            message.author.bot
+        ) {
             return;
         }
 
@@ -1426,9 +1254,10 @@ client.on(
     }
 );
 
-/* =========================
-   LOGIN
-========================= */
+
+/* =========================================================
+   CONNEXION DISCORD
+========================================================= */
 
 client.login(
     process.env.DISCORD_TOKEN
