@@ -369,11 +369,8 @@ client.once("ready", async () => {
 
     try {
 
-        const guild =
-            await client.guilds.fetch(GUILD_ID);
-
-        await guild.commands.set(commands);
-
+        await client.application.commands.set(commands);
+        
         console.log(
             `✅ ${commands.length} commandes enregistrées`
         );
