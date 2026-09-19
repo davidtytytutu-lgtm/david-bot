@@ -1102,128 +1102,279 @@ client.on(
         }
 
 
-        /* =====================================================
-           /ip
-        ===================================================== */
+/* =====================================================
+   /ip
+===================================================== */
 
-        if (
-            interaction.commandName ===
-            "ip"
-        ) {
+if (
+    interaction.commandName ===
+    "ip"
+) {
 
-            const ip =
-                interaction.options
-                    .getString("ip")
-                    .trim();
+    const input =
+        interaction.options
+            .getString("ip")
+            .trim();
 
-            await interaction.deferReply();
+    await interaction.deferReply();
 
-            try {
+    try {
 
-                /* =============================================
-                   VALIDATION IPv4
-                ============================================= */
+        /* =============================================
+           EXTRACTION IP / DOMAINE + PORT
+        ============================================= */
 
-                const ipv4 =
-                    /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
+        let host = input;
+        let port = null;
 
-                if (!ipv4.test(ip)) {
+        /*
+         * Exemple :
+         * 8.8.8.8:27015
+         * nl-node-ams1.tpn.gg:27015
+         */
 
-                    await interaction.editReply(
-                        `❌ **Adresse IPv4 invalide.**\n\n` +
-                        `📡 IP testée : \`${ip}\``
-                    );
+        const portMatch =
+            input.match(/^(.+):([0-9]{1,5})$/);
 
-                    return;
-                }
+        if (portMatch) {
 
+            host = portMatch[1];
+            port = Number(portMatch[2]);
 
-                /* =============================================
-                   IP PRIVÉE
-                ============================================= */
-
-                const privateIP =
-                    /^(10\.)|^(192\.168\.)|^(172\.(1[6-9]|2[0-9]|3[0-1])\.)/;
-
-                if (privateIP.test(ip)) {
-
-                    await interaction.editReply(
-                        `🏠 **IP PRIVÉE**\n\n` +
-                        `📡 IP : \`${ip}\`\n` +
-                        `🔒 Type : **IPv4 privée**\n\n` +
-                        `Cette adresse appartient à un réseau local et n'est pas directement accessible depuis Internet.`
-                    );
-
-                    return;
-                }
-
-
-                /* =============================================
-                   IP PUBLIQUE
-                ============================================= */
-
-                const response =
-                    await fetch(
-                        `https://ipwho.is/${encodeURIComponent(
-                            ip
-                        )}`
-                    );
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        `HTTP ${response.status}`
-                    );
-
-                }
-
-                const data =
-                    await response.json();
-
-
-                if (!data.success) {
-
-                    await interaction.editReply(
-                        `❌ Adresse IP invalide ou informations indisponibles.\n\n` +
-                        `📡 IP : \`${ip}\``
-                    );
-
-                    return;
-                }
-
+            if (
+                port < 1 ||
+                port > 65535
+            ) {
 
                 await interaction.editReply(
-                    `🌐 **INFORMATIONS IP**\n\n` +
-                    `📡 IP : \`${data.ip}\`\n` +
-                    `🔒 Type : **IPv4 publique**\n` +
-                    `🌍 Pays : **${data.country || "Inconnu"}**\n` +
-                    `🏙️ Ville : **${data.city || "Inconnue"}**\n` +
-                    `🗺️ Région : **${data.region || "Inconnue"}**\n` +
-                    `📮 Code postal : **${data.postal || "Inconnu"}**\n` +
-                    `🏢 Organisation : **${data.connection?.org || "Inconnue"}**\n` +
-                    `📡 FAI : **${data.connection?.isp || "Inconnu"}**\n` +
-                    `🕐 Fuseau : **${data.timezone?.id || "Inconnu"}**`
+                    `❌ **Port invalide.**\n\n` +
+                    `📡 Adresse : \`${input}\``
                 );
 
-            } catch (error) {
+                return;
+            }
+        }
 
-                console.error(
-                    "❌ Erreur /ip :",
-                    error
-                );
+
+        /* =============================================
+           VALIDATION IPv4
+        ============================================= */
+
+        const ipv4 =
+            /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
+
+
+        /* =============================================
+           IP PRIVÉE
+        ============================================= */
+
+        const privateIP =
+            /^(10\.)|^(192\.168\.)|^(172\.(1[6-9]|2[0-9]|3[0-1])\.)/;
+
+
+        if (ipv4.test(host)) {
+
+            if (privateIP.test(host)) {
 
                 await interaction.editReply(
-                    `❌ Impossible de récupérer les informations de cette IP.\n\n` +
-                    `📡 IP testée : \`${ip}\``
+                    `🏠 **IP PRIVÉE**\n\n` +
+                    `📡 IP : \`${host}\`` +
+                    (
+                        port
+                            ? `\n🎮 Port : \`${port}\``
+                            : ""
+                    ) +
+                    `\n🔒 Type : **IPv4 privée**\n\n` +
+                    `Cette adresse appartient à un réseau local et n'est pas directement accessible depuis Internet.`
+                );
+
+                return;
+            }
+
+
+            /* =============================================
+               IP PUBLIQUE
+            ============================================= */
+
+            const response =
+                await fetch(
+                    `https://ipwho.is/${encodeURIComponent(host)}`
+                );
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `HTTP ${response.status}`
                 );
 
             }
 
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                await interaction.editReply(
+                    `❌ Informations indisponibles.\n\n` +
+                    `📡 IP : \`${host}\``
+                );
+
+                return;
+            }
+
+
+            await interaction.editReply(
+                `🌐 **INFORMATIONS IP**\n\n` +
+                `📡 IP : \`${data.ip}\`` +
+                (
+                    port
+                        ? `\n🎮 Port : \`${port}\``
+                        : ""
+                ) +
+                `\n🔒 Type : **IPv4 publique**\n` +
+                `🌍 Pays : **${data.country || "Inconnu"}**\n` +
+                `🏙️ Ville : **${data.city || "Inconnue"}**\n` +
+                `🗺️ Région : **${data.region || "Inconnue"}**\n` +
+                `📮 Code postal : **${data.postal || "Inconnu"}**\n` +
+                `🏢 Organisation : **${data.connection?.org || "Inconnue"}**\n` +
+                `📡 FAI : **${data.connection?.isp || "Inconnu"}**\n` +
+                `🕐 Fuseau : **${data.timezone?.id || "Inconnu"}**`
+            );
+
             return;
         }
 
+
+        /* =============================================
+           DOMAINE
+        ============================================= */
+
+        const hostname =
+            /^[a-zA-Z0-9.-]+$/;
+
+        if (!hostname.test(host)) {
+
+            await interaction.editReply(
+                `❌ **Adresse invalide.**\n\n` +
+                `📡 Adresse testée : \`${input}\``
+            );
+
+            return;
+        }
+
+
+        /* =============================================
+           DNS
+        ============================================= */
+
+        const dnsResponse =
+            await fetch(
+                `https://dns.google/resolve?name=${encodeURIComponent(host)}&type=A`
+            );
+
+        if (!dnsResponse.ok) {
+
+            throw new Error(
+                `DNS HTTP ${dnsResponse.status}`
+            );
+
+        }
+
+        const dnsData =
+            await dnsResponse.json();
+
+        const answer =
+            dnsData.Answer?.find(
+                record =>
+                    record.type === 1
+            );
+
+        if (!answer) {
+
+            await interaction.editReply(
+                `❌ Impossible de trouver l'adresse IP de :\n` +
+                `\`${host}\``
+            );
+
+            return;
+        }
+
+        const resolvedIP =
+            answer.data;
+
+
+        /* =============================================
+           INFORMATIONS IP DU DOMAINE
+        ============================================= */
+
+        const response =
+            await fetch(
+                `https://ipwho.is/${encodeURIComponent(resolvedIP)}`
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `IP API HTTP ${response.status}`
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            await interaction.editReply(
+                `🌐 **SERVEUR**\n\n` +
+                `🔗 Domaine : \`${host}\`\n` +
+                `📡 IP : \`${resolvedIP}\`` +
+                (
+                    port
+                        ? `\n🎮 Port : \`${port}\``
+                        : ""
+                )
+            );
+
+            return;
+        }
+
+
+        await interaction.editReply(
+            `🎮 **SERVEUR / DOMAINE**\n\n` +
+            `🔗 Domaine : \`${host}\`\n` +
+            `📡 IP : \`${resolvedIP}\`` +
+            (
+                port
+                    ? `\n🎮 Port : \`${port}\``
+                    : ""
+            ) +
+            `\n🌍 Pays : **${data.country || "Inconnu"}**\n` +
+            `🏙️ Ville : **${data.city || "Inconnue"}**\n` +
+            `🗺️ Région : **${data.region || "Inconnue"}**\n` +
+            `🏢 Organisation : **${data.connection?.org || "Inconnue"}**\n` +
+            `📡 FAI : **${data.connection?.isp || "Inconnu"}**\n` +
+            `🕐 Fuseau : **${data.timezone?.id || "Inconnu"}**`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erreur /ip :",
+            error
+        );
+
+        await interaction.editReply(
+            `❌ Impossible de récupérer les informations de cette adresse.\n\n` +
+            `📡 Adresse testée : \`${input}\``
+        );
+
     }
-);
+
+    return;
+}
 
 
 /* =========================================================
