@@ -1907,22 +1907,20 @@ client.on(
                 const privateIP =
                     /^(10\.)|^(192\.168\.)|^(172\.(1[6-9]|2[0-9]|3[0-1])\.)/;
 
+            if (
+                ipv4.test(
+                    host
+                )
+            ) {
 
-                if (
-                    ipv4.test(
-                        host
-                    )
-                {
+            if (
+                privateIP.test(
+                    host
+                )
+            ) {
 
-
-                    if (
-                        privateIP.test(
-                            host
-                        )
-                    ) {
-
-                        await interaction.editReply(
-
+            await interaction.editReply(
+            
                             `🏠 **IP PRIVÉE**\n\n` +
 
                             `📡 IP : \`${host}\`` +
