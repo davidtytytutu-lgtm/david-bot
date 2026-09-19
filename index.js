@@ -6,10 +6,6 @@ const {
 
 const http = require("http");
 
-// ==================================================
-// CONFIGURATION
-// ==================================================
-
 const GUILD_ID = "1550531386295718060";
 
 const GITHUB_MEME_REPO =
@@ -27,19 +23,30 @@ const TIKTOK =
 const NEOCITIES =
     "https://neocities.org/site/david-officiel";
 
-// Serveur heartbeat
+/* =========================
+   HEARTBEAT
+========================= */
+
 const HEARTBEAT_URL =
     "https://david-bot-heartbeat.onrender.com/heartbeat";
 
-// URL publique de DAVID BOT
 const DAVID_BOT_URL =
     "https://david-bot-l5up.onrender.com/heartbeat";
 
 const HEARTBEAT_DELAY = 10000;
 
-// ==================================================
-// CLIENT DISCORD
-// ==================================================
+/* =========================
+   ROLES
+========================= */
+
+const ROLES = {
+    wojak: "1550800068767121438",
+    troll: "1550796528942317648"
+};
+
+/* =========================
+   DISCORD CLIENT
+========================= */
 
 const client = new Client({
     intents: [
@@ -49,21 +56,21 @@ const client = new Client({
     ]
 });
 
-// ==================================================
-// SERVEUR HTTP
-// ==================================================
+/* =========================
+   HTTP SERVER
+========================= */
 
 const PORT = process.env.PORT || 10000;
 
 const server = http.createServer((req, res) => {
 
-    // ----------------------------------------------
-    // HEARTBEAT
-    // ----------------------------------------------
+    /* ===== HEARTBEAT ===== */
 
     if (req.url === "/heartbeat") {
 
-        console.log("💓 Heartbeat reçu de HEARTBEAT SERVER");
+        console.log(
+            "💓 Heartbeat reçu de HEARTBEAT SERVER"
+        );
 
         res.writeHead(200, {
             "Content-Type": "application/json"
@@ -75,7 +82,6 @@ const server = http.createServer((req, res) => {
             from: "DAVID-BOT"
         }));
 
-        // Répondre à HEARTBEAT après 10 secondes
         setTimeout(() => {
             sendHeartbeatToServer();
         }, HEARTBEAT_DELAY);
@@ -83,9 +89,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // ----------------------------------------------
-    // PAGE PRINCIPALE
-    // ----------------------------------------------
+    /* ===== PAGE PRINCIPALE ===== */
 
     if (req.url === "/") {
 
@@ -93,14 +97,14 @@ const server = http.createServer((req, res) => {
             "Content-Type": "text/plain; charset=utf-8"
         });
 
-        res.end("🤖 DAVID BOT est en ligne !");
+        res.end(
+            "🤖 DAVID BOT est en ligne !"
+        );
 
         return;
     }
 
-    // ----------------------------------------------
-    // 404
-    // ----------------------------------------------
+    /* ===== 404 ===== */
 
     res.writeHead(404, {
         "Content-Type": "text/plain; charset=utf-8"
@@ -109,25 +113,23 @@ const server = http.createServer((req, res) => {
     res.end("404 - Not Found");
 });
 
-server.listen(PORT, "0.0.0.0", () => {
+server.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
 
-    console.log(
-        `🌐 Serveur HTTP démarré sur le port ${PORT}`
-    );
+        console.log(
+            `🌐 Serveur HTTP démarré sur le port ${PORT}`
+        );
 
-});
+    }
+);
 
-// ==================================================
-// HEARTBEAT
-// ==================================================
-
-let heartbeatStarted = false;
+/* =========================
+   SEND HEARTBEAT
+========================= */
 
 async function sendHeartbeatToServer() {
-
-    if (!heartbeatStarted) {
-        heartbeatStarted = true;
-    }
 
     try {
 
@@ -135,10 +137,15 @@ async function sendHeartbeatToServer() {
             "💓 DAVID BOT → HEARTBEAT SERVER"
         );
 
-        const response = await fetch(HEARTBEAT_URL);
+        const response = await fetch(
+            HEARTBEAT_URL
+        );
 
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
         }
 
         const data = await response.json();
@@ -155,56 +162,117 @@ async function sendHeartbeatToServer() {
             error.message
         );
 
+        console.log(
+            "🔄 Nouvelle tentative dans 30 secondes..."
+        );
+
         setTimeout(() => {
             sendHeartbeatToServer();
         }, 30000);
     }
 }
 
-// ==================================================
-// COMMANDES SLASH
-// ==================================================
+/* =========================
+   SLASH COMMANDS
+========================= */
 
 const commands = [
 
+    /* PING */
+
     new SlashCommandBuilder()
         .setName("ping")
-        .setDescription("Vérifie si DAVID BOT répond."),
+        .setDescription(
+            "Vérifie si DAVID BOT répond."
+        ),
+
+    /* HELP */
 
     new SlashCommandBuilder()
         .setName("help")
-        .setDescription("Affiche les commandes disponibles."),
+        .setDescription(
+            "Affiche les commandes disponibles."
+        ),
+
+    /* RICK ROLL */
 
     new SlashCommandBuilder()
         .setName("rick-roll")
-        .setDescription("Rick Roll quelqu'un 😈")
+        .setDescription(
+            "Rick Roll quelqu'un 😈"
+        )
         .addUserOption(option =>
             option
                 .setName("utilisateur")
-                .setDescription("La personne à Rick Roll")
+                .setDescription(
+                    "La personne à Rick Roll"
+                )
                 .setRequired(false)
         ),
 
+    /* MEME */
+
     new SlashCommandBuilder()
         .setName("meme")
-        .setDescription("Envoie un meme aléatoire 😂"),
+        .setDescription(
+            "Envoie un meme aléatoire 😂"
+        ),
+
+    /* WEBSITE */
 
     new SlashCommandBuilder()
         .setName("web")
-        .setDescription("Envoie le site officiel de DAVID."),
+        .setDescription(
+            "Envoie le site officiel de DAVID."
+        ),
+
+    /* TIKTOK */
 
     new SlashCommandBuilder()
         .setName("tiktok")
-        .setDescription("Envoie le TikTok de DAVID."),
+        .setDescription(
+            "Envoie le TikTok de DAVID."
+        ),
+
+    /* NEOCITIES */
 
     new SlashCommandBuilder()
         .setName("neocities")
-        .setDescription("Envoie le profil Neocities de DAVID.")
+        .setDescription(
+            "Envoie le profil Neocities de DAVID."
+        ),
+
+    /* ROLE */
+
+    new SlashCommandBuilder()
+        .setName("role")
+        .setDescription(
+            "Obtenir ou retirer un rôle."
+        )
+        .addStringOption(option =>
+            option
+                .setName("role")
+                .setDescription(
+                    "Choisis le rôle"
+                )
+                .setRequired(true)
+                .addChoices(
+                    {
+                        name: "🗿 Wojak",
+                        value: "wojak"
+                    },
+                    {
+                        name: "🧌 Troll",
+                        value: "troll"
+                    }
+                )
+        )
+
 ];
 
-// ==================================================
-// BOT PRÊT
-// ==================================================
+/* =========================
+   BOT READY
+========================= */
 
 client.once("ready", async () => {
 
@@ -214,7 +282,8 @@ client.once("ready", async () => {
 
     try {
 
-        const guild = await client.guilds.fetch(GUILD_ID);
+        const guild =
+            await client.guilds.fetch(GUILD_ID);
 
         await guild.commands.set(commands);
 
@@ -225,243 +294,450 @@ client.once("ready", async () => {
     } catch (error) {
 
         console.error(
-            "❌ Erreur commandes slash :",
+            "❌ Erreur lors de l'enregistrement des commandes :",
             error
         );
+
     }
 
-    // Premier heartbeat
+    /* =========================
+       START HEARTBEAT
+    ========================= */
+
     setTimeout(() => {
+
         sendHeartbeatToServer();
+
     }, 5000);
+
 });
 
-// ==================================================
-// COMMANDES DISCORD
-// ==================================================
+/* =========================
+   INTERACTIONS
+========================= */
 
-client.on("interactionCreate", async (interaction) => {
+client.on(
+    "interactionCreate",
+    async (interaction) => {
 
-    if (!interaction.isChatInputCommand()) return;
-
-    // ----------------------------------------------
-    // /ping
-    // ----------------------------------------------
-
-    if (interaction.commandName === "ping") {
-
-        await interaction.reply("🏓 Pong !");
-
-        return;
-    }
-
-    // ----------------------------------------------
-    // /help
-    // ----------------------------------------------
-
-    if (interaction.commandName === "help") {
-
-        await interaction.reply({
-            content:
-                "🤖 **DAVID BOT — COMMANDES**\n\n" +
-
-                "🏓 `/ping`\n" +
-                "→ Vérifie si DAVID BOT répond.\n\n" +
-
-                "📖 `/help`\n" +
-                "→ Affiche cette aide.\n\n" +
-
-                "😈 `/rick-roll`\n" +
-                "→ Rick Roll quelqu'un.\n\n" +
-
-                "🎯 `/rick-roll utilisateur:@nom`\n" +
-                "→ Rick Roll une personne précise.\n\n" +
-
-                "😂 `/meme`\n" +
-                "→ Envoie un meme aléatoire depuis GitHub.\n\n" +
-
-                "🌐 `/web`\n" +
-                "→ Envoie le site officiel.\n\n" +
-
-                "🎵 `/tiktok`\n" +
-                "→ Envoie le TikTok.\n\n" +
-
-                "🌐 `/neocities`\n" +
-                "→ Envoie le profil Neocities."
-        });
-
-        return;
-    }
-
-    // ----------------------------------------------
-    // /rick-roll
-    // ----------------------------------------------
-
-    if (interaction.commandName === "rick-roll") {
-
-        const utilisateur =
-            interaction.options.getUser("utilisateur");
-
-        if (utilisateur) {
-
-            await interaction.reply(
-                `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
-            );
-
-        } else {
-
-            await interaction.reply(
-                `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
-            );
+        if (!interaction.isChatInputCommand()) {
+            return;
         }
 
-        return;
-    }
+        /* =========================
+           PING
+        ========================= */
 
-    // ----------------------------------------------
-    // /meme
-    // ----------------------------------------------
+        if (interaction.commandName === "ping") {
 
-    if (interaction.commandName === "meme") {
-
-        await interaction.deferReply();
-
-        try {
-
-            const response = await fetch(
-                GITHUB_MEME_REPO,
-                {
-                    headers: {
-                        "User-Agent": "DAVID-BOT"
-                    }
-                }
+            await interaction.reply(
+                "🏓 Pong !"
             );
 
-            if (!response.ok) {
-                throw new Error(
-                    `GitHub HTTP ${response.status}`
-                );
-            }
+            return;
+        }
 
-            const files = await response.json();
+        /* =========================
+           HELP
+        ========================= */
 
-            const memes = files.filter(file => {
+        if (interaction.commandName === "help") {
 
-                if (file.type !== "file") {
-                    return false;
-                }
+            await interaction.reply({
 
-                const name =
-                    file.name.toLowerCase();
+                content:
+                    "🤖 **DAVID BOT — COMMANDES**\n\n" +
 
-                return (
-                    name.endsWith(".jpg") ||
-                    name.endsWith(".jpeg") ||
-                    name.endsWith(".png") ||
-                    name.endsWith(".gif") ||
-                    name.endsWith(".webp") ||
-                    name.endsWith(".mp4") ||
-                    name.endsWith(".webm")
-                );
+                    "🏓 `/ping`\n" +
+                    "→ Vérifie si DAVID BOT répond.\n\n" +
+
+                    "📖 `/help`\n" +
+                    "→ Affiche cette aide.\n\n" +
+
+                    "😈 `/rick-roll`\n" +
+                    "→ Rick Roll quelqu'un.\n\n" +
+
+                    "🎯 `/rick-roll utilisateur:@nom`\n" +
+                    "→ Rick Roll une personne précise.\n\n" +
+
+                    "😂 `/meme`\n" +
+                    "→ Envoie un meme aléatoire depuis GitHub.\n\n" +
+
+                    "🌐 `/web`\n" +
+                    "→ Envoie le site officiel de DAVID.\n\n" +
+
+                    "🎵 `/tiktok`\n" +
+                    "→ Envoie le TikTok de DAVID.\n\n" +
+
+                    "🌐 `/neocities`\n" +
+                    "→ Envoie le profil Neocities de DAVID.\n\n" +
+
+                    "🎭 `/role`\n" +
+                    "→ Obtenir ou retirer un rôle.\n\n" +
+
+                    "🗿 **Wojak**\n" +
+                    "🧌 **Troll**",
+
+                ephemeral: false
+
             });
 
-            if (memes.length === 0) {
+            return;
+        }
+
+        /* =========================
+           RICK ROLL
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "rick-roll"
+        ) {
+
+            const utilisateur =
+                interaction.options.getUser(
+                    "utilisateur"
+                );
+
+            if (utilisateur) {
+
+                await interaction.reply(
+                    `😈 **${interaction.user} vient de Rick Roll ${utilisateur} !**\n\n${RICK_ROLL_GIF}`
+                );
+
+            } else {
+
+                await interaction.reply(
+                    `😈 **Tu viens de te faire Rick Roll !**\n\n${RICK_ROLL_GIF}`
+                );
+
+            }
+
+            return;
+        }
+
+        /* =========================
+           MEME
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "meme"
+        ) {
+
+            await interaction.deferReply();
+
+            try {
+
+                const response =
+                    await fetch(
+                        GITHUB_MEME_REPO,
+                        {
+                            headers: {
+                                "User-Agent":
+                                    "DAVID-BOT"
+                            }
+                        }
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `GitHub HTTP ${response.status}`
+                    );
+
+                }
+
+                const files =
+                    await response.json();
+
+                const memes =
+                    files.filter(file => {
+
+                        if (
+                            file.type !==
+                            "file"
+                        ) {
+                            return false;
+                        }
+
+                        const name =
+                            file.name.toLowerCase();
+
+                        return (
+                            name.endsWith(".jpg") ||
+                            name.endsWith(".jpeg") ||
+                            name.endsWith(".png") ||
+                            name.endsWith(".gif") ||
+                            name.endsWith(".webp") ||
+                            name.endsWith(".mp4") ||
+                            name.endsWith(".webm")
+                        );
+
+                    });
+
+                if (
+                    memes.length === 0
+                ) {
+
+                    await interaction.editReply(
+                        "❌ Aucun meme trouvé dans le dossier `meme/`."
+                    );
+
+                    return;
+                }
+
+                const meme =
+                    memes[
+                        Math.floor(
+                            Math.random() *
+                            memes.length
+                        )
+                    ];
+
+                const memeURL =
+                    `https://raw.githubusercontent.com/davidtytytutu-lgtm/david-bot/refs/heads/main/meme/${encodeURIComponent(meme.name)}`;
+
+                console.log(
+                    `😂 Meme choisi : ${meme.name}`
+                );
 
                 await interaction.editReply(
-                    "❌ Aucun meme trouvé dans `meme/`."
+                    `😂 **Meme aléatoire : ${meme.name}**\n\n${memeURL}`
                 );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Erreur /meme :",
+                    error
+                );
+
+                await interaction.editReply(
+                    "❌ Impossible de récupérer un meme depuis GitHub."
+                );
+
+            }
+
+            return;
+        }
+
+        /* =========================
+           WEBSITE
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "web"
+        ) {
+
+            await interaction.reply(
+                `🌐 **DAVID OFFICIEL**\n${WEBSITE}`
+            );
+
+            return;
+        }
+
+        /* =========================
+           TIKTOK
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "tiktok"
+        ) {
+
+            await interaction.reply(
+                `🎵 **TikTok de DAVID**\n${TIKTOK}`
+            );
+
+            return;
+        }
+
+        /* =========================
+           NEOCITIES
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "neocities"
+        ) {
+
+            await interaction.reply(
+                `🌐 **Profil Neocities de DAVID**\n${NEOCITIES}`
+            );
+
+            return;
+        }
+
+        /* =========================
+           ROLE
+        ========================= */
+
+        if (
+            interaction.commandName ===
+            "role"
+        ) {
+
+            const roleName =
+                interaction.options.getString(
+                    "role"
+                );
+
+            const roleId =
+                ROLES[roleName];
+
+            if (!roleId) {
+
+                await interaction.reply({
+                    content:
+                        "❌ Ce rôle n'existe pas.",
+                    ephemeral: true
+                });
 
                 return;
             }
 
-            const meme =
-                memes[
-                    Math.floor(
-                        Math.random() * memes.length
+            try {
+
+                const role =
+                    await interaction.guild.roles.fetch(
+                        roleId
+                    );
+
+                if (!role) {
+
+                    await interaction.reply({
+                        content:
+                            "❌ Rôle introuvable sur le serveur.",
+                        ephemeral: true
+                    });
+
+                    return;
+                }
+
+                /* Vérifie la hiérarchie */
+
+                if (
+                    role.position >=
+                    interaction.guild.members.me.roles.highest.position
+                ) {
+
+                    await interaction.reply({
+                        content:
+                            "❌ Je ne peux pas gérer ce rôle car mon rôle est placé trop bas dans la hiérarchie Discord.",
+                        ephemeral: true
+                    });
+
+                    return;
+                }
+
+                const member =
+                    await interaction.guild.members.fetch(
+                        interaction.user.id
+                    );
+
+                /* =========================
+                   RETIRER LE ROLE
+                ========================= */
+
+                if (
+                    member.roles.cache.has(
+                        roleId
                     )
-                ];
+                ) {
 
-            const memeURL =
-                `https://raw.githubusercontent.com/davidtytytutu-lgtm/david-bot/refs/heads/main/meme/${encodeURIComponent(meme.name)}`;
+                    await member.roles.remove(
+                        role
+                    );
 
-            console.log(
-                `😂 Meme choisi : ${meme.name}`
-            );
+                    await interaction.reply(
+                        `❌ ${role} a été retiré de ${interaction.user}.`
+                    );
 
-            await interaction.editReply(
-                `😂 **Meme aléatoire : ${meme.name}**\n\n${memeURL}`
-            );
+                    console.log(
+                        `🎭 Rôle retiré : ${role.name} → ${interaction.user.tag}`
+                    );
 
-        } catch (error) {
+                }
 
-            console.error(
-                "❌ Erreur /meme :",
-                error
-            );
+                /* =========================
+                   AJOUTER LE ROLE
+                ========================= */
 
-            await interaction.editReply(
-                "❌ Impossible de récupérer un meme."
-            );
+                else {
+
+                    await member.roles.add(
+                        role
+                    );
+
+                    await interaction.reply(
+                        `✅ ${role} a été ajouté à ${interaction.user}.`
+                    );
+
+                    console.log(
+                        `🎭 Rôle ajouté : ${role.name} → ${interaction.user.tag}`
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Erreur /role :",
+                    error
+                );
+
+                if (
+                    !interaction.replied
+                ) {
+
+                    await interaction.reply({
+                        content:
+                            "❌ Impossible de modifier ton rôle. Vérifie que DAVID BOT possède la permission **Gérer les rôles**.",
+                        ephemeral: true
+                    });
+
+                }
+
+            }
+
+            return;
         }
 
-        return;
     }
+);
 
-    // ----------------------------------------------
-    // /web
-    // ----------------------------------------------
+/* =========================
+   !PING CLASSIQUE
+========================= */
 
-    if (interaction.commandName === "web") {
+client.on(
+    "messageCreate",
+    (message) => {
 
-        await interaction.reply(
-            `🌐 **DAVID OFFICIEL**\n${WEBSITE}`
-        );
+        if (message.author.bot) {
+            return;
+        }
 
-        return;
+        if (
+            message.content ===
+            "!ping"
+        ) {
+
+            message.reply(
+                "🏓 Pong !"
+            );
+
+        }
+
     }
+);
 
-    // ----------------------------------------------
-    // /tiktok
-    // ----------------------------------------------
+/* =========================
+   LOGIN
+========================= */
 
-    if (interaction.commandName === "tiktok") {
-
-        await interaction.reply(
-            `🎵 **TikTok de DAVID**\n${TIKTOK}`
-        );
-
-        return;
-    }
-
-    // ----------------------------------------------
-    // /neocities
-    // ----------------------------------------------
-
-    if (interaction.commandName === "neocities") {
-
-        await interaction.reply(
-            `🌐 **Profil Neocities de DAVID**\n${NEOCITIES}`
-        );
-
-        return;
-    }
-});
-
-// ==================================================
-// !PING
-// ==================================================
-
-client.on("messageCreate", (message) => {
-
-    if (message.author.bot) return;
-
-    if (message.content === "!ping") {
-        message.reply("🏓 Pong !");
-    }
-});
-
-// ==================================================
-// CONNEXION
-// ==================================================
-
-client.login(process.env.DISCORD_TOKEN);
+client.login(
+    process.env.DISCORD_TOKEN
+);
