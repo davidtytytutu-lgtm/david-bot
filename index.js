@@ -33,7 +33,7 @@ const HEARTBEAT_URL =
 const DAVID_BOT_URL =
     "https://david-bot-l5up.onrender.com/heartbeat";
 
-const HEARTBEAT_DELAY = 10000;
+const HEARTBEAT_DELAY = 5000;
 
 /* =========================
    ROLES
